@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Blog;
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreBlogRequest;
+use App\Http\Requests\UpdateBlogRequest;
 
 class BlogController extends Controller
 {
@@ -12,13 +13,13 @@ class BlogController extends Controller
      */
     public function index()
     {
-        $blogs = Blog::all();
+        //
+        $blogs =  Blog::paginate(5);
         $context = [
             'blogs' => $blogs
         ];
-            // dd($context);
-        //
-        return view('blog.home',$context);
+        return view('blog.home', $context);
+        // return $context;
     }
 
     /**
@@ -32,7 +33,7 @@ class BlogController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreBlogRequest $request)
     {
         //
     }
@@ -42,14 +43,12 @@ class BlogController extends Controller
      */
     public function show($id)
     {
-        $blogs = Blog::find($id);
-        $context=[
-             'blogs'=>$blogs
-        ];
-
-        return view('blog.singleblog',$context);
-
         //
+        $blogs = Blog::find($id);
+        $context = [
+            'blogs' => $blogs
+        ];
+        return view('blog.singleblog', $context);
     }
 
     /**
@@ -63,7 +62,7 @@ class BlogController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Blog $blog)
+    public function update(UpdateBlogRequest $request, Blog $blog)
     {
         //
     }
@@ -71,8 +70,12 @@ class BlogController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Blog $blog)
+    public function destroy($id)
     {
         //
+        $blog = Blog::find($id);
+        $blog->delete();
+        return redirect('/blog')->with('success','Data Deleted');
+
     }
 }

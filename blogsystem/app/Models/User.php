@@ -21,6 +21,11 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'phone',
+        'is_admin',
+        'is_editor',
+
+
     ];
 
     /**
@@ -42,4 +47,15 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+
+    function is_admin()
+    {
+        return $this->is_admin;
+    }
+
+    function is_editor()
+    {
+        return $this->is_editor;
+    }
 }

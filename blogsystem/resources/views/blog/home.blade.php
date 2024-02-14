@@ -8,7 +8,7 @@
     <meta name="description" content="">
     <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
     <meta name="generator" content="Hugo 0.118.2">
-    <title>Blog</title>
+    <title>Blogs</title>
 
     <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/cover/">
 
@@ -24,7 +24,7 @@
 <link rel="icon" href="https://getbootstrap.com/docs/5.3/assets/img/favicons/favicon-16x16.png" sizes="16x16" type="image/png">
 <link rel="manifest" href="https://getbootstrap.com/docs/5.3/assets/img/favicons/manifest.json">
 <link rel="mask-icon" href="https://getbootstrap.com/docs/5.3/assets/img/favicons/safari-pinned-tab.svg" color="#712cf9">
-<link rel="icon" href="https://getbootstrap.com/docs/5.3/assets/img/favicons/favicon.ico">
+{{-- <link rel="icon" href="https://getbootstrap.com/docs/5.3/assets/img/favicons/favicon.ico"> --}}
 <meta name="theme-color" content="#712cf9">
 
 
@@ -146,21 +146,53 @@
     <div>
       <h3 class="float-md-start mb-0">Blogs</h3>
       <nav class="nav nav-masthead justify-content-center float-md-end">
-        <a class="nav-link fw-bold py-1 px-0 active" aria-current="page" href="#">Home</a>
-        <a class="nav-link fw-bold py-1 px-0" href="#">Features</a>
-        <a class="nav-link fw-bold py-1 px-0" href="#">Contact</a>
+        @if (Route::has('login'))
+        @auth
+        <a class="nav-link fw-bold py-1 px-0" href="{{ url('/dashboard') }}">{{ Auth::user()->name}}</a>
+
+
+
+   @else
+   <a class="nav-link fw-bold py-1 px-0" href="{{ route('login') }}">Login</a>
+   @if (Route::has('register'))
+
+        <a class="nav-link fw-bold py-1 px-0" href="{{ route('register') }}">Registeration</a>
+        @endif
+        @endauth
+    @endif
       </nav>
     </div>
  </header>
+ <main class="px-3">
+    @if(\Session::has('success'))
+    <div class="alert alert-danger">
+        <h4>{{Session::get('success')}}</h4>
+
+    </div>
+
+    @endif
  @foreach ($blogs as $blog)
 
-<main class="px-3">
 
 <a href="{{url('blog',$blog->id)}}" class="title"><h2 class="title">{{ $blog->title}}</h2></a>
     <p class="lead">{{$blog->views}} views</p>
+    @if(Auth::user())
+        {{-- @if (Auth::user()->is_admin() || (Auth::user()->is_editor() && Auth::user()->id == $blog->user_id )) --}}
+        @if(Auth::user()->is_admin() ||  (Auth::user()->is_editor() && Auth::user()->id ==$blog->user_id))
+        <form action="{{action('App\Http\Controllers\BlogController@destroy',$blog->id)}}" method='POST'>
+            @csrf
+            <input type="hidden" name="_method" value="DELETE">
+            <button type="submit" class="btn btn-danger">DELETE</button>
+        </form>
+        @endif
+    @endif
+
+    @endforeach
+    <div class="d-flex justify-content-center">
+        {!! $blogs->links() !!}
+    </div>
 
 </main>
-@endforeach
 
 <footer class="mt-auto text-white-50">
 </footer>

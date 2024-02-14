@@ -8,15 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 class Blog extends Model
 {
     use HasFactory;
-    protected $fillable = [
-        'title', 'content', 'views', 'author_id'
 
+
+    protected $fillable=[
+        'title','content','user_id','views'
     ];
-    protected $read_only = ['title', 'id']; 
 
-    public function getauthor(){
-
-        return $this->belongsTo(Author::class,'author_id','id');
-
+    function get_blogs(){
+        // return $this->belongsTo(Instructor::class, 'instructor_id', 'id');
+        return $this->belongsTo(User::class,'user_id','id')->get();
     }
+    
 }
